@@ -1,17 +1,34 @@
 import { FC } from 'react';
 import CharacterGrid from './characters.styles';
-import { useGetCharactersQuery } from 'features/characters/characters.endpoints';
 import { CharacterCardComponent } from 'features/characters/card';
+import { gql, useQuery } from '@apollo/client';
 
 export type CharactersComponentProps = {
   ids: number[];
 };
 
-const CharactersComponent: FC<CharactersComponentProps> = ({ ids }: CharactersComponentProps) => {
-  const { data: characters, error, isLoading } = useGetCharactersQuery({ ids });
+export const GET_CHARACTERS = gql`
+  query getCharacters($ids: [ID!]!){
+    charactersByIds(ids: $ids){
+      name
+      id
+      image 
+    }
+  }
+`
 
-  if (isLoading) return <div>Loading characters...</div>;
-  if (error || !characters) return <div>Error when loading. Please try again later.</div>;
+
+
+const CharactersComponent: FC<CharactersComponentProps> = ({ ids }: CharactersComponentProps) => {
+  const {loading, data, error} = useQuery(GET_CHARACTERS, {
+    variables: {ids}
+  })
+  console.log(ids, "ids");  
+  const characters = data?.charactersByIds
+  if (loading) return <div>Loading characters...</div>;
+  if (error || !characters) {
+    console.log(error)
+    return <div>Error when loading. Please try again later.</div>};
   const character = !Array.isArray(characters) ? characters : undefined;
 
   return (

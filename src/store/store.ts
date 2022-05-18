@@ -1,10 +1,8 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { locationReducer, locationsApi } from 'features/locations';
-import { charactersApi } from 'features/characters';
 import { followingReducer } from 'features/following';
 
 const rootReducer = combineReducers({
-  [charactersApi.reducerPath]: charactersApi.reducer,
   [locationsApi.reducerPath]: locationsApi.reducer,
   //
   locations: locationReducer,
@@ -16,7 +14,7 @@ export const store = configureStore({
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(locationsApi.middleware).concat(charactersApi.middleware)
+    getDefaultMiddleware().concat(locationsApi.middleware)
 });
 
 // Infiere los tipos del `RootState` y `AppDispatch` de la store
