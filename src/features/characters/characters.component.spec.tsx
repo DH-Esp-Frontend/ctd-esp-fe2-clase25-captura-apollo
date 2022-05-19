@@ -2,7 +2,6 @@ import { screen } from '@testing-library/react';
 import { CharacterCardProps } from 'features/characters/card';
 import {  CharactersComponent } from 'features/characters/index';
 import { renderWithProviders } from 'test/test-utils';
-import { MockedProvider } from '@apollo/client/testing';
 import { store } from 'store/store';
 import { GET_CHARACTERS } from './characters.component';
 
@@ -34,19 +33,14 @@ describe('CharactersComponent', () => {
 
   describe('when fetching characters', () => {
     it('should render loading', async () => {
-      renderWithProviders(
-        <MockedProvider mocks={mocks} addTypename={false}>
-          <CharactersComponent ids={[1]} />
-        </MockedProvider>, { store })
+      renderWithProviders(<CharactersComponent ids={[1]} />, { store, mocks })
       //
       expect(screen.getByText('Loading characters...')).toBeInTheDocument();
     });
   });
   describe('when finish loading with only one id', () => {
     it('should render one card', async () => {
-      renderWithProviders( <MockedProvider mocks={mocks} addTypename={false}>
-        <CharactersComponent ids={[1]}  />
-      </MockedProvider>, { store });
+      renderWithProviders(<CharactersComponent ids={[1]}  />, { store, mocks });
       expect(await screen.findByText('Character card')).toBeInTheDocument();
     });
   });
@@ -67,9 +61,7 @@ describe('CharactersComponent', () => {
           }
         }
       ]
-      renderWithProviders( <MockedProvider mocks={moreIdsMock} addTypename={false}>
-        <CharactersComponent ids={[1,2]}  />
-      </MockedProvider>, { store });
+      renderWithProviders( <CharactersComponent ids={[1,2]}  />, { store, mocks: moreIdsMock });
       //
       expect((await screen.findAllByText('Character card')).length).toBe(2);
     });
@@ -87,9 +79,7 @@ describe('CharactersComponent', () => {
           error: new Error('An error occurred'),
         }
       ]
-      renderWithProviders( <MockedProvider mocks={errorMock} addTypename={false}>
-        <CharactersComponent ids={[1]}  />
-      </MockedProvider>, { store });
+      renderWithProviders(<CharactersComponent ids={[1]}  />, { store, mocks: errorMock });
       //
       expect((await screen.findByText('Error when loading. Please try again later.'))).toBeInTheDocument();
     })
