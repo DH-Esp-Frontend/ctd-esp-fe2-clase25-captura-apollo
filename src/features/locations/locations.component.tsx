@@ -1,45 +1,29 @@
 import { FC } from 'react';
 import { LocationsTable } from 'features/locations/table';
+import { useGetLocationsQuery } from 'features/locations/locations.endpoints';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { Pagination } from 'features/pagination';
-import { gql, useQuery } from '@apollo/client';
-
-
-export const GET_LOCATIONS = gql`
- query getLocations($page: Int){
-    locations(page: $page){
-      info{
-        pages
-        next
-        prev
-        count
-      }
-    	results{
-        id
-        name
-        type
-        dimension
-        residents{
-          name
-        }
-      }
-  }
-  }
-  `
-
+import { nextLocations, previousLocations } from 'features/locations/locations.slices';
 
 const LocationsComponent: FC = () => {
-  const {data, error, loading, refetch} = useQuery(GET_LOCATIONS, {variables: {page: 1}})
-  const locations = data?.locations
-  console.log(locations)
-  if (loading) return <div>Loading interplanetary locations...</div>;
-  if (error || !locations) return <div>Error when loading. Please try again later.</div>;
+  const dispatch = useAppDispatch();
+  const { query: locationsQuery, page } = useAppSelector((state) => state.locations);
+  const {
+    data: locations,
+    error,
+    isLoading
+  } = useGetLocationsQuery({ name: locationsQuery, page });
+
+  if (isLoading) return <div>Loading interplanetary locations...</div>;
+  if (error || !locations || locations.results.length === 0)
+    return <div>Error when loading. Please try again later.</div>;
 
   const onPreviousPage = () => {
-    refetch({page: locations.info?.prev})
+    dispatch(previousLocations());
   };
 
   const onNextPage = () => {
-    refetch({page: locations.info?.next})
+    dispatch(nextLocations());
   };
 
   return (

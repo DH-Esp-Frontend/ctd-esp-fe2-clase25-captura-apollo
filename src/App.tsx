@@ -10,34 +10,22 @@ import { store } from 'store/store';
 import FollowingPage from 'pages/Following.page';
 import { LanguageComponent, LanguageProvider } from 'features/language';
 import { TrackingProvider } from 'features/tracking/tracking.context';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
-
-
-
-const client = new ApolloClient({
-  uri: "https://rickandmortyapi.com/graphql",
-  cache: new InMemoryCache()
-})
-
-
 
 const App: FC = () => (
   <Provider store={store}>
     <ThemeProvider theme={theme}>
-      <ApolloProvider client={client}>
-        <TrackingProvider>
-          <LanguageProvider>
-            <GlobalStyle />
-            <LanguageComponent />
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/location/:id" element={<LocationPage />} />
-              <Route path="/following" element={<FollowingPage />} />
-            </Routes>
-          </LanguageProvider>
-        </TrackingProvider>
-      </ApolloProvider>
+      <TrackingProvider>
+        <LanguageProvider>
+          <GlobalStyle />
+          <LanguageComponent />
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/location/:id" element={<LocationPage />} />
+            <Route path="/following" element={<FollowingPage />} />
+          </Routes>
+        </LanguageProvider>
+      </TrackingProvider>
     </ThemeProvider>
   </Provider>
 );
